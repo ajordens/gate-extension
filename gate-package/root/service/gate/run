@@ -1,0 +1,41 @@
+#!/bin/bash
+exec 2>&1
+ulimit -n 32768
+ulimit -u 10240
+export PATH=/command:/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin
+
+servicename=$(cd `dirname $0` && basename `pwd`)
+
+NETFLIX_ENVIRONMENT=${NETFLIX_ENVIRONMENT:-"test"}
+NETFLIX_STACK=${NETFLIX_STACK:-"test"}
+NETFLIX_ACCOUNT=${NETFLIX_ACCOUNT:-"test"}
+
+let GB=`free -m | grep '^Mem:' | awk '{print $2}'`\*90/102400
+
+HEAP="$GB"g
+NEWGEN_RATIO="4"
+EXTRA_OPTS="-XX:MaxTenuringThreshold=4 -XX:SurvivorRatio=10 -XX:TargetSurvivorRatio=90 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly"
+
+mkdir -p /mnt/logs/${servicename}
+chmod 0775 /mnt/logs/${servicename}
+LOGFILE="/mnt/logs/${servicename}/${servicename}.log"
+touch $LOGFILE
+chmod 0644 $LOGFILE
+chown -R $NETFLIX_APPUSER /mnt/logs/${servicename}
+
+user=$NETFLIX_APPUSER
+
+JAVA_OPTS="$EXTRA_OPTS \
+    -Xmx$HEAP -Xms$HEAP \
+    -Dfile.encoding=UTF8 \
+    -Dnetflix.environment=$NETFLIX_ENVIRONMENT \
+    -Dnetflix.stack=$NETFLIX_STACK \
+    -Dnetflix.appinfo.stack=$NETFLIX_STACK \
+    -Dnetflix.account=$NETFLIX_ACCOUNT \
+    -Dspring.profiles.active=$NETFLIX_STACK,$NETFLIX_ACCOUNT \
+    -Dgroovy.GStringTemplateEngine.reuseClassLoader=true"
+
+command="/apps/${servicename}/bin/${servicename} --spring.config.location=/apps/${servicename}/config/"
+
+cd /apps/${servicename}/config
+JAVA_OPTS="${JAVA_OPTS}" $command >> $LOGFILE 2>&1

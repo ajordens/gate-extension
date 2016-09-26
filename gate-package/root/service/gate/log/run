@@ -1,0 +1,7 @@
+#!/bin/bash
+
+mkdir ./main
+chown nobody:nobody ./main
+chmod 755 ./main
+
+exec /usr/local/bin/setuidgid nobody /command/multilog t ./main

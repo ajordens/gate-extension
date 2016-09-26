@@ -1,0 +1,46 @@
+apply plugin: 'spring-boot'
+apply plugin: "nebula.ospackage"
+
+dependencies {
+  compile project(':gate-netflix')
+
+  runtime "com.netflix.spinnaker.gate:gate-web:${gateVersion}"
+}
+
+tasks.build.finalizedBy tasks.buildDeb
+tasks.buildDeb.dependsOn { installDist }
+
+applicationName = 'gate'
+mainClassName = 'com.netflix.spinnaker.gate.Main'
+
+startScripts {
+  doLast {
+    unixScript.text = unixScript.text.replace('CLASSPATH=$APP_HOME', 'CLASSPATH=$APP_HOME/config:$APP_HOME')
+  }
+}
+
+ospackage {
+  from "${project.buildDir}/install/gate"
+  into "/apps/gate"
+}
+
+springBoot {
+  mainClass = 'com.netflix.spinnaker.gate.Main'
+}
+
+tasks.withType(org.springframework.boot.gradle.run.BootRunTask) {
+  classpath configurations.runtime + file('root/apps/gate/config')
+  systemProperty('netflix.account', 'test')
+  systemProperty('netflix.environment', 'test')
+  systemProperty('netflix.stack', 'test')
+  systemProperty('spring.config.location', '${user.home}/.spinnaker')
+  systemProperty('spring.profiles.active', 'test,local')
+  systemProperty('server.port', '8084')
+  maxHeapSize = '2G'
+  minHeapSize = '2G'
+  workingDir = 'root/apps/gate/config'
+  jvmArgs '-server'
+}
+
+bootRepackage.enabled = false
+
