@@ -22,6 +22,9 @@ startScripts {
 ospackage {
   from "${project.buildDir}/install/gate"
   into "/apps/gate"
+
+  from "root"
+  into "/"
 }
 
 springBoot {
