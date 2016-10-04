@@ -2,7 +2,7 @@ apply plugin: 'spring-boot'
 apply plugin: "nebula.ospackage"
 
 dependencies {
-  compile project(':gate-netflix')
+  compile project(':gate-extension')
 
   runtime "com.netflix.spinnaker.gate:gate-web:${gateVersion}"
 }
