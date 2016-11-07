@@ -14,13 +14,12 @@ buildscript {
 
 ext {
   gateVersion = "2.92.0"
-  netflixplatformVersion = "1.43.0"
   spinnakerDependenciesVersion = "0.63.0"
 }
 
 allprojects { project ->
   repositories {
-    if ([gateVersion, netflixplatformVersion, spinnakerDependenciesVersion].find { it.endsWith('-SNAPSHOT') }) {
+    if ([gateVersion, spinnakerDependenciesVersion].find { it.endsWith('-SNAPSHOT') }) {
       mavenLocal()
     }
     maven { url 'http://dl.bintray.com/spinnaker/spinnaker/' }
