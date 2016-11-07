@@ -10,6 +10,9 @@ services:
     baseUrl: http://localhost:8080
   clouddriver:
     baseUrl: http://localhost:7002
+  fiat:
+    enabled: false
+    autoConfig: false
   rosco:
     enabled: true
     baseUrl: http://localhost:8087

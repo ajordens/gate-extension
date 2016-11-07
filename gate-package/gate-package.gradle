@@ -47,3 +47,4 @@ tasks.withType(org.springframework.boot.gradle.run.BootRunTask) {
 
 bootRepackage.enabled = false
 
+mainClassName = 'com.netflix.spinnaker.gate.Main'

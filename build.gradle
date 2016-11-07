@@ -5,7 +5,7 @@ buildscript {
   }
   dependencies {
     classpath "org.springframework.boot:spring-boot-gradle-plugin:1.2.8.RELEASE"
-    classpath('com.netflix.spinnaker.gradle:spinnaker-gradle-project:3.5.0') { transitive = false }
+    classpath('com.netflix.spinnaker.gradle:spinnaker-gradle-project:3.9.0') { transitive = false }
     classpath 'org.yaml:snakeyaml:1.16'
     classpath 'com.netflix.nebula:nebula-release-plugin:4.1.0'
     classpath "com.netflix.nebula:gradle-ospackage-plugin:4.0.0"
@@ -13,9 +13,9 @@ buildscript {
 }
 
 ext {
-  gateVersion = "2.77.0"
-  netflixplatformVersion = "1.42.0"
-  spinnakerDependenciesVersion = "0.51.0"
+  gateVersion = "2.92.0"
+  netflixplatformVersion = "1.43.0"
+  spinnakerDependenciesVersion = "0.63.0"
 }
 
 allprojects { project ->
@@ -34,7 +34,6 @@ allprojects { project ->
     dependenciesVersion = spinnakerDependenciesVersion
   }
 
-  // apply plugin: 'nebula'
   apply plugin: 'nebula.nebula-release'
   apply plugin: 'groovy'
 
@@ -46,8 +45,6 @@ allprojects { project ->
     exclude group: 'javax.servlet', module: 'javax.servlet-api'
     exclude group: 'org.springframework.boot', module: 'spring-boot-starter-data-rest'
     resolutionStrategy {
-      force 'org.codehaus.groovy:groovy-all:2.4.5'
-      force 'org.spockframework:spock-core:1.0-groovy-2.4'
       eachDependency {
         if (it.requested.group == 'org.springframework.boot') {
           it.useVersion '1.2.8.RELEASE'
